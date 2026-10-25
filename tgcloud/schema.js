@@ -1,10 +1,6 @@
-import { table, integer, text } from 'sdk/db';
+import { table, text } from 'sdk/db';
 
-// Your database tables go here as named exports. Deploying this file registers the
-// schema; applying the changes (a migration) updates the database.
-
-// Uncomment to define your first table:
-// export const users = table('users', {
-//   id:   integer('id').primaryKey({ autoIncrement: true }),
-//   name: text('name').notNull(),
-// });
+export const config = table('config', {
+  key:   text('key').primaryKey(),
+  value: text('value').notNull(),
+});

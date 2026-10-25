@@ -1,13 +1,30 @@
-// handlers/message.js — runs on each `message` update. The file name is the
-// Telegram update type; the platform calls the default export with the matching
-// payload (here, a Message). The full update is available as `ctx.update`.
-
 import { api } from 'sdk';
+import { getTimings } from '../lib/aladhan.js';
+import { to12hour } from '../lib/time.js';
 
 export default async function (message, ctx) {
-  // Echo the text back — replace with your own logic.
+  const chat_id = message.chat.id
+
+  if (message.location){
+    const { latitude, longitude } = message.location
+    const times = await getTimings(latitude, longitude)
+    const text = Object.entries(times)
+      .map(([name, t]) => `${name} ${to12hour(t)}`)
+      .join('\n');
+    await api.sendMessage({ chat_id, text })
+    return
+  }
+
   await api.sendMessage({
-    chat_id: message.chat.id,
-    text: `You said: ${message.text ?? '(no text)'}`,
-  });
+    chat_id,
+    text: 'Share your location to get prayer times.',
+    reply_markup: {
+      keyboard: [[{
+        text: 'Share location',
+        request_location: true,
+      }]],
+      resize_keyboard: true,
+      one_time_keyboard: true,
+    }
+  })
 }
