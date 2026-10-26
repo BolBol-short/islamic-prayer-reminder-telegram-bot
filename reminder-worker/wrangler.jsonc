@@ -11,16 +11,27 @@
 		"enabled": true
 	},
 	"upload_source_maps": true,
-	"triggers": { "crons": ["* * * * *"]},
-	"vars": { 
-		"LAT": "11.56", 
-		"LON": "104.92", 
-		"CHAT_ID": "5061847588", 
+	"triggers": {
+		"crons": [
+			"* * * * *"
+		]
+	},
+	"vars": {
+		"LAT": "11.56",
+		"LON": "104.92",
+		"CHAT_ID": "5061847588",
 		"ALADHAN_URL": "https://api.aladhan.com/v1",
 		"TELEGRAM_API": "https://api.telegram.org",
-	 },
+		"TIMEZONE": "Asia/Phnom_Penh",
+	},
 	"workers_dev": false,
 	"preview_urls": false,
+	"kv_namespaces": [
+		{
+			"binding": "TIMES",
+			"id": "21f5ac55adda4a4eadc653368d4e288d"
+		}
+	],
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
