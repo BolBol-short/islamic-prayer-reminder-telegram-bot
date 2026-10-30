@@ -1,5 +1,16 @@
 import { api } from 'sdk'
 import { regionKeyboard } from '../lib/keyboards.js'
+import { setReminders } from './worker.js'
+
+const reminder = (on) => async (msg) => {
+  try {
+    await setReminders(msg.chat.id, on)
+    await api.sendMessage({ chat_id: msg.chat.id, text: on ? 'Reminder On!' : 'Reminder Off' })
+  } catch (e) {
+    console.error(e)
+    await api.sendMessage({ chat_id: msg.chat.id, text: 'Could not update reminders, try again later.' })
+  }
+}
 
 async function start(msg){
   await api.sendMessage({ 
@@ -39,4 +50,6 @@ export const handle = (msg) => {
 export const commands = {
   '/start': start,
   '/setlocation': setLocation,
+  '/reminderon': reminder(true),
+  '/reminderoff': reminder(false),
 }

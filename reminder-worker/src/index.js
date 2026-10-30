@@ -9,7 +9,27 @@
  */
 
 export default {
+	async fetch(req, env){
+		if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 })
+		if (req.headers.get('x-secret') !== env.SHARED_SECRET) return new Response('Unauthorized', { status: 401 })
+		
+		let body
+		try { 
+			body = await req.json() 
+		} catch { 
+			return new Response('Bad JSON', { status: 400 })
+		}
+		const { chat_id, on } = body
+		if (typeof on !== 'boolean') return new Response('Bad Body', { status: 400 })
+		if(String(chat_id) !== env.CHAT_ID) return new Response('Forbidden', { status: 403})
+		
+		await env.TIMES.put('reminders', on ? 'on' : 'off')
+		return new Response('ok')
+	},
+
 	async scheduled(event, env){
+		if (await env.TIMES.get('reminders') === 'off') return
+
 		const [date, time] = new Date().toLocaleString('sv-SE', {timeZone: env.TIMEZONE}).split(' ')
 		const now = time.slice(0, 5)
 		const key = date.slice(0, 7)

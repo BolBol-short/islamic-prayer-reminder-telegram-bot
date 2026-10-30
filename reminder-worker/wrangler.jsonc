@@ -24,7 +24,7 @@
 		"TELEGRAM_API": "https://api.telegram.org",
 		"TIMEZONE": "Asia/Phnom_Penh",
 	},
-	"workers_dev": false,
+	"workers_dev": true,
 	"preview_urls": false,
 	"kv_namespaces": [
 		{
