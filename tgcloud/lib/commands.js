@@ -1,6 +1,8 @@
 import { api } from 'sdk'
-import { regionKeyboard } from '../lib/keyboards.js'
 import { setReminders } from './worker.js'
+import { getUser } from './users.js'
+import { searchCities } from './geo.js'
+import { regionKeyboard, cityKeyboard } from '../lib/keyboards.js'
 
 const reminder = (on) => async (msg) => {
   try {
@@ -26,6 +28,23 @@ async function setLocation(msg){
   })
 }
 
+async function citySearch(msg, countryCode){
+  try {
+    const results = await searchCities(msg.text, countryCode)
+    if(!results.length) {
+      return await api.sendMessage({ chat_id: msg.chat.id, text: 'No match. Try again' })
+    }
+    await api.sendMessage({
+      chat_id: msg.chat.id,
+      text: 'Pick your City: ',
+      reply_markup: { inline_keyboard: cityKeyboard(results)}
+    })
+  } catch (e) {
+    console.error(e)
+    await api.sendMessage({ chat_id: msg.chat.id, text: 'Search failed, try again. '})
+  }
+}
+
 async function unknownCmd(msg){
     await api.sendMessage({
         chat_id: msg.chat.id,
@@ -40,11 +59,14 @@ async function hint(msg){
     })
 }
 
-export const handle = (msg) => {
-    const text = msg.text ?? ''
-    const cmd = text.split(/[\s@]/)[0].toLowerCase()
-    if (commands[cmd]) return commands[cmd](msg)
-    return (text.startsWith('/') ? unknownCmd : hint)(msg)
+export const handle = async (msg) => {
+  const text = msg.text ?? ''
+  const cmd = text.split(/[\s@]/)[0].toLowerCase()
+  if (commands[cmd]) return commands[cmd](msg)
+  if (text.startsWith('/')) return unknownCmd(msg)
+  const user = text && await getUser(msg.from.id)
+  if (user?.pendingCountry) return citySearch(msg, user.pendingCountry)
+  return hint(msg)
 }
 
 export const commands = {

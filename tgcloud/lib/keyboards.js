@@ -33,3 +33,7 @@ export function countryKeyboard(subregion, page = 0){
     rows.push([{ text: `< Back to ${all[0][3]}`, callback_data: `g:${all[0][3]}` }])
     return rows;
 }
+
+export function cityKeyboard(results){
+    return results.map(p => [{ text: `${p.name}, ${p.admin1 ?? p.country}`, callback_data: `p:${p.id}`}])
+}

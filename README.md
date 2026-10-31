@@ -18,11 +18,21 @@ You ── /reminderoff ──> bot (tgcloud) ── POST + secret ──> Worke
 | Command | What it does |
 |---|---|
 | `/start` | Short welcome message |
-| `/setlocation` | Opens a picker: continent, region, then country. The city step is not built yet, so nothing is saved |
+| `/setlocation` | Walks you from continent to region to country, then asks you to type a city and saves your choice |
 | `/reminderon` | Turns prayer reminders on |
 | `/reminderoff` | Turns prayer reminders off |
 
-Command names are matched in lowercase, so `/reminderOn` works too. Any other text gets a short hint.
+Command names are matched in lowercase, so `/reminderOn` works too. An unknown command gets an error reply, and any other text gets a short hint.
+
+## Setting your location
+
+`/setlocation` sends one message and edits it as you tap. A Back button returns you to the page you came from.
+
+1. Pick a continent, then a region such as South-Eastern Asia, then a country from a paged list.
+2. The bot asks you to type a city name. It searches [Open-Meteo's geocoding API](https://open-meteo.com/en/docs/geocoding-api) inside that country and shows up to five matches, each with its region so that places with the same name can be told apart.
+3. Tap a match. The message changes to "Location set" and the buttons disappear.
+
+The bot never asks for your exact position. It stores the coordinates of the city you picked, not where you are.
 
 ## How the reminders work
 
@@ -32,20 +42,31 @@ The Worker fetches a whole month of times from AlAdhan once and keeps it in Work
 
 `/reminderon` and `/reminderoff` make the bot call the Worker over HTTPS. The request carries a shared secret in the `x-secret` header. The Worker also checks that the chat id matches the one it serves, then writes `on` or `off` to KV. While the flag is `off`, the cron does nothing.
 
+The Worker does not use your saved location yet. It still reads one fixed place from `wrangler.jsonc`.
+
+## What the bot stores
+
+The bot's database has two tables.
+
+- `config` holds settings as key and value rows: the Worker's address, the shared secret, and the address of the geocoding API.
+- `users` holds one row per person, keyed by Telegram id: country code, city name, the city's coordinates, its time zone, and the country you are in the middle of choosing. It stores no name and no username.
+
 ## Project layout
 
 ```
 tgcloud/
-  schema.js            database tables (currently one: config)
+  schema.js            database tables: config and users
   handlers/
     message.js         routes text messages to lib/commands.js
-    callback_query.js  handles button taps in the location picker
+    callback_query.js  handles button taps and edits the picker message
   lib/
-    commands.js        command table: /start, /setlocation, /reminderon, /reminderoff
-    keyboards.js       continent, region and country button layouts
+    commands.js        command table, plus the city search for plain text
+    keyboards.js       button layouts for continents, regions, countries and city matches
     countries.js       generated list of 247 countries (do not edit by hand)
+    users.js           reads and saves a user's row
+    geo.js             city search and place lookup against Open-Meteo
     worker.js          calls the Worker to switch reminders on or off
-    aladhan.js         prayer time lookup by coordinates, unused until the city step
+    aladhan.js         prayer time lookup by coordinates, not called by any command yet
     time.js            24-hour to 12-hour conversion
 reminder-worker/
   src/index.js         cron job (scheduled) and the on/off endpoint (fetch)
@@ -67,7 +88,7 @@ npx tgcloud push
 npx tgcloud migrate
 ```
 
-`push` uploads the code. `migrate` creates the `config` table. The two steps are separate on purpose, because deploying never touches the database.
+`push` uploads the code. `migrate` creates the tables. The two steps are separate on purpose, because deploying never touches the database.
 
 ### The Worker
 
@@ -92,7 +113,7 @@ For local runs, put the same two values in `reminder-worker/.dev.vars`, then run
 
 ### Connecting the two
 
-The bot needs the Worker's address and the shared secret. Both go into the bot's `config` table as rows named `WORKER_URL` and `SHARED_SECRET`. Insert them once with a short throwaway endpoint run through `npx tgcloud run`, then delete that file. Do not commit it, since it holds the secret.
+The bot needs three rows in its `config` table: `WORKER_URL` (the Worker's address), `SHARED_SECRET` (the same value as the Worker's secret) and `GEOCODING_URL` (`https://geocoding-api.open-meteo.com/v1`). Insert them once with a short throwaway endpoint run through `npx tgcloud run`, then delete that file. Do not commit it if it contains the secret.
 
 ## Secrets
 
@@ -100,18 +121,23 @@ Nothing secret is stored in git. The bot token and the shared secret live as Wor
 
 ## Known limits
 
-- Reminders serve one person for now. The chat id and location are fixed in `wrangler.jsonc`.
+- Reminders serve one person for now. The chat id and location are fixed in `wrangler.jsonc`, so a saved location does not change when reminders fire.
 - The Worker keeps no record of what it already sent. If Cloudflare skips a cron minute, that reminder is lost.
 - Cloudflare's free plan allows about 50 outgoing requests per cron run, which caps messages per minute once there are many users.
 - Prayer times come from coordinates, so the time zone in `wrangler.jsonc` has to match them.
+- The country you are choosing is remembered until you pick a city. If you walk away and send other text later, the bot reads it as a city name. Commands still work.
+- The city search relies on Open-Meteo, whose free tier is meant for non-commercial use.
 
 ## Status
 
 - [x] Bot deployed with a command router
 - [x] Reminders sent by a Worker cron, with a monthly cache
-- [x] Location picker down to the country
+- [x] Location picker from continent to country
+- [x] City step by typed search, with the choice saved
 - [x] `/reminderon` and `/reminderoff`
-- [ ] City step and saved location per user
-- [ ] Reminders for more than one user
+- [ ] City buttons for common cities, so typing is only a fallback
+- [ ] A command that shows today's times for the saved city
+- [ ] A command to delete your saved data
+- [ ] Reminders that use each person's saved location
 
 The day-by-day history is in [CHANGELOG.md](CHANGELOG.md).
