@@ -7,6 +7,7 @@ Newest day first. The README describes the current state; this file records how 
 - Added `vault/`, a set of linked notes for Obsidian: overview, architecture, commands and flows, data and config, services and limits, decisions, gotchas and roadmap. Obsidian's own `vault/.obsidian/` folder is gitignored.
 - Added a "Read this first" block to `AGENTS.md` that points AI assistants at `vault/AI handoff.md`.
 - Rotated the shared secret between the bot and the Worker.
+- Add menu for commands when user type "/". Improving the command showcasing experience
 
 ## 2026-10-31
 

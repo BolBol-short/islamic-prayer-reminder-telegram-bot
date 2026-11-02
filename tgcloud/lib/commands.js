@@ -69,6 +69,13 @@ export const handle = async (msg) => {
   return hint(msg)
 }
 
+export const menu = [
+  {command: 'start', description: 'Start the bot'},
+  {command: 'setlocation', description: 'Set your location for prayers'},
+  {command: 'reminderon', description: 'Turn your reminder on'},
+  {command: 'reminderoff', description: 'Turn your reminder off'},
+]
+
 export const commands = {
   '/start': start,
   '/setlocation': setLocation,
