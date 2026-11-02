@@ -2,6 +2,12 @@
 
 Newest day first. The README describes the current state; this file records how it got there.
 
+## 2026-11-02
+
+- Added `vault/`, a set of linked notes for Obsidian: overview, architecture, commands and flows, data and config, services and limits, decisions, gotchas and roadmap. Obsidian's own `vault/.obsidian/` folder is gitignored.
+- Added a "Read this first" block to `AGENTS.md` that points AI assistants at `vault/AI handoff.md`.
+- Rotated the shared secret between the bot and the Worker.
+
 ## 2026-10-31
 
 - Added the city step to `/setlocation`. After a country is picked, the bot asks for a city name, searches Open-Meteo inside that country, and shows up to five matches with their region. Tapping one saves it and replaces the message with "Location set".

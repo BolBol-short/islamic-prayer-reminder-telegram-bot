@@ -5,6 +5,12 @@ This file is auto-loaded by Claude Code, Cursor, and similar tools — keep it s
 and true. For the full SDK reference (db, Bot API, fetch), see
 [docs/tgcloud-sdk.md](docs/tgcloud-sdk.md).
 
+## Read this first
+
+If `vault/AI handoff.md` exists, read it before doing anything. It lists the skills to load
+by default (`caveman:caveman` and `ponytail:ponytail`), the working rules (tutor mode, no git
+writes, no secrets in chat), the project's state, and what to do next.
+
 ## What this project is
 
 A **Telegram Mini App bot** running on Telegram's serverless platform. You write
