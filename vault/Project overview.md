@@ -13,9 +13,10 @@ It started as a Python bot with SQLite, Postgres, a Gemini `/ask` command and a 
 
 The owner writes the code. An AI assistant acts as a tutor: it gives hints, reviews files, runs read-only checks, and explains errors. The assistant does not run git commands that change the repo, so commits and pushes are done by the owner. See [[Gotchas]] for the traps found along the way.
 
-## State on 2026-11-02
+## State on 2026-11-03
 
-- Command router with `/start`, `/setlocation`, `/reminderon`, `/reminderoff`.
+- Command router with `/start`, `/setlocation`, `/reminderon`, `/reminderoff`, and a registered `/` command menu.
+- `tgcloud/lib` was restructured into folders by purpose, and settings reads go through `getConfig`.
 - Location picker from continent to country, then a typed city search that saves the choice.
 - Reminders run for one person, from fixed settings in the Worker. They do not use the saved location yet.
 - Next steps are in [[Roadmap]].

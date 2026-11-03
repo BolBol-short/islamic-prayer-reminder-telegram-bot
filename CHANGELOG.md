@@ -2,6 +2,13 @@
 
 Newest day first. The README describes the current state; this file records how it got there.
 
+## 2026-11-03
+
+- Restructured `tgcloud/lib` into folders: `api-call`, `cloudflare-worker`, `commands`, `data`, `database`, `keyboards` and `utils`. Nothing changes for users. Imports in the two handlers, the command router and the generator script were updated to match.
+- Added `tgcloud/lib/database/config.js` with `getConfig(key)`. It replaces three copies of the same settings lookup in `aladhan.js`, `geo.js` and `worker.js`, and a missing row now fails with a clear message.
+- Removed an unused import from `aladhan.js` and gave its error a status code.
+- Updated the README and the vault notes for the new paths.
+
 ## 2026-11-02
 
 - Added `vault/`, a set of linked notes for Obsidian: overview, architecture, commands and flows, data and config, services and limits, decisions, gotchas and roadmap. Obsidian's own `vault/.obsidian/` folder is gitignored.

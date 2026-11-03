@@ -4,12 +4,12 @@ Where each piece of data lives. Values are never written here.
 
 ## Bot database (tgcloud, SQLite)
 
-`config` has `key` (primary key) and `value`. Rows in use:
+`config` has `key` (primary key) and `value`. Read a row with `getConfig(key)` from `lib/database/config.js`, which throws if the row is missing. Rows in use:
 
 - `WORKER_URL`: the Worker's public address.
 - `SHARED_SECRET`: the same secret the Worker holds.
 - `GEOCODING_URL`: base address of Open-Meteo geocoding.
-- `ALADHAN_KEY`: despite the name, it holds AlAdhan's base address. Used only by `lib/aladhan.js`, which no command calls yet.
+- `ALADHAN_KEY`: despite the name, it holds AlAdhan's base address. Used only by `lib/api-call/aladhan.js`, which no command calls yet.
 
 `users` has one row per person, keyed by Telegram id:
 
@@ -31,4 +31,4 @@ KV namespace `TIMES`:
 
 ## Generated files
 
-`tgcloud/lib/countries.js` is built by `scripts/gen-countries.mjs` from the dr5hn countries dataset. 247 countries, each as `[code, name, flag, region, subregion]`. Do not edit by hand.
+`tgcloud/lib/data/countries.js` is built by `scripts/gen-countries.mjs` from the dr5hn countries dataset. 247 countries, each as `[code, name, flag, region, subregion]`. Do not edit by hand.

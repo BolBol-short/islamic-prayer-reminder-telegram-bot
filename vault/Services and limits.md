@@ -17,12 +17,16 @@ Facts checked during the build. Limits and prices change, so recheck before rely
 - `timings?latitude&longitude&method=3` returns one day. The response includes `meta.timezone`.
 - `timingsByCity` uses a geocoder. A nonsense city gives 400. A city that does not match its country gave 503 with a misleading "geocoding unavailable" message. A country alone is rejected.
 - `curl` needs `-L`, because the API redirects. `fetch` in the runtimes used here follows redirects.
+- `calendar/{year}?latitude&longitude&method=3` returns a whole year. `data` is an object keyed `1` to `12`, and each value is an array of that month's days. Cut to the five prayers it is about 15 KB per location.
+- Measured on 2026-11-02 for Phnom Penh, two runs each: one day took 0.8 to 1.0 s (1.2 KB), one month 1.5 to 4.6 s (39 KB), one year about 2.6 s (469 KB). The month timing was noisy.
 - No API key, and no rate limit was found in the docs I fetched. This is not confirmed.
 
 ## Open-Meteo geocoding
 
 - `search?name&count&language&countryCode` returns matches with `id`, `name`, `admin1`, `country`, `country_code`, `latitude`, `longitude`, `timezone` and `population`.
 - `get?id=` returns one place by id.
+- Capitals carry `feature_code` `PPLC` and provincial capitals `PPLA`, so a search can prefer them. When 25 Cambodian provincial capital towns were searched, 22 matched on the first try. `Krong Khemarak Phoumin` found nothing, and `Doun Kaev` matched a place in the wrong province. Always review the matches a script picks.
+- Of the 247 countries in use, 245 have a capital in the countries dataset. Only `Douglas, Isle of Man` has a comma in its capital name.
 - No key. The free tier is for non-commercial use, which I did not verify in its terms.
 
 ## Cloudflare (free plan, checked 2026-10-26)

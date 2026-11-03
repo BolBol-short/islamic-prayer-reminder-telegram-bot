@@ -1,6 +1,6 @@
 import { writeFileSync } from 'node:fs';
 
-const out = new URL('../tgcloud/lib/countries.js', import.meta.url);
+const out = new URL('../tgcloud/lib/data/countries.js', import.meta.url);
 
 const SOURCE = 'https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/json/countries.json';
 const all = await (await fetch(SOURCE)).json();

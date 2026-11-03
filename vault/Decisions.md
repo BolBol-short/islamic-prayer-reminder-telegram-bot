@@ -2,10 +2,18 @@
 
 Newest first. Each entry says what was chosen and why.
 
+## 2026-11-03
+
+- Keep the full `/setlocation` picker for now (continent, region, country, typed city). A Cambodia-only version with province buttons and a Mini App with a Three.js globe were discussed and postponed. The globe would be built on the same city data, and the endpoint must never trust raw coordinates from the page.
+- Restructure `tgcloud/lib` into folders by purpose (`api-call`, `cloudflare-worker`, `commands`, `data`, `database`, `keyboards`, `utils`). Names with hyphens worked under `tgcloud run`. The root `reminder-worker/` folder keeps its name, and its `name` in `wrangler.jsonc` must never change, because secrets, KV and the cron belong to that name.
+- Keep `countries.js` as a committed generated module, not a database table. It is static reference data, and the keyboards stay synchronous.
+- Prayer time cache design, not built yet: store in the bot's database, with a lookup order of year, month, day, then a live AlAdhan call. Keys use coordinates rounded to four decimals, for example `y:11.5624,104.9160:2026`. The yearly tier is a bulk job over every city in the generated city list, run as small idempotent batches through `tgcloud run`. Day and month are filled lazily.
+
 ## 2026-11-02
 
+- Register the `/` command menu with `setMyCommands` from a throwaway endpoint. The list lives in `menu` in `lib/commands/commands.js`.
 - Keep a vault of notes in `vault/`, next to the code but outside `tgcloud/`, so it is never deployed. No secrets go in it.
-- Court ruling on whether `vault/` goes into the public GitHub repo: approved with conditions, 84 to 78 over keeping it local, medium confidence. The owner has not decided yet. Conditions: rotate `SHARED_SECRET` first, reword the notes that mention the leak, scan the vault before every commit, never write real addresses or ids in it. Reverse the ruling if real addresses or ids start going into the notes. The repo was verified public on 2026-11-02.
+- Court ruling on whether `vault/` goes into the public GitHub repo: approved with conditions, 84 to 78 over keeping it local, medium confidence. The owner chose to commit it. Conditions: rotate `SHARED_SECRET` first, reword the notes that mention the leak, scan the vault before every commit, never write real addresses or ids in it. Reverse the ruling if real addresses or ids start going into the notes. The repo was verified public on 2026-11-02.
 
 ## 2026-10-31
 
@@ -26,7 +34,7 @@ Newest first. Each entry says what was chosen and why.
 - Build the picker as one message edited in place. Callback data stays stateless, and Back targets are computed from the data.
 - Start the picker at continents, then regions, then countries, because a flat alphabetical list of 247 countries took too many taps.
 - Drop the share-location button. The bot should not ask for exact positions.
-- Move commands into a table in `lib/commands.js`, and button screens into a table in `callback_query.js`.
+- Move commands into a table in `lib/commands/commands.js`, and button screens into a table in `callback_query.js`.
 
 ## 2026-10-25
 

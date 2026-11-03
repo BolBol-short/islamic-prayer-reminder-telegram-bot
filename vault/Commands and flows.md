@@ -34,6 +34,12 @@ Short strings, always under 64 bytes, and stateless: the Back target is computed
 | `k:<code>` | A country was picked |
 | `p:<id>` | An Open-Meteo place was picked |
 
+## The `/` menu
+
+Telegram shows a command list when a user types `/`, but it reads that list from a separate registration, not from the router. The list is the `menu` array in `lib/commands/commands.js`, with `command` (lowercase, no slash) and `description`. Register it with `api.setMyCommands({ commands: menu })` from a throwaway endpoint run through `npx tgcloud run`, and read it back with `api.getMyCommands()`.
+
+A new command needs an entry in `commands`, an entry in `menu`, and a rerun of the registration. Missing the router entry gives "Unknown cmd". Missing the menu entry hides it from the list.
+
 ## Planned change
 
-City buttons for common cities, with typing as a fallback. See [[Roadmap]].
+City buttons for common cities, with typing as a fallback, and later a Mini App picker. See [[Roadmap]].

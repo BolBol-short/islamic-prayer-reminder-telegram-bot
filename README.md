@@ -24,6 +24,8 @@ You ── /reminderoff ──> bot (tgcloud) ── POST + secret ──> Worke
 
 Command names are matched in lowercase, so `/reminderOn` works too. An unknown command gets an error reply, and any other text gets a short hint.
 
+The list that appears when you type `/` is registered separately with Telegram. A new command needs three things: an entry in the `commands` table, an entry in the `menu` list (both in `lib/commands/commands.js`), and a rerun of the registration step described under Setup.
+
 ## Setting your location
 
 `/setlocation` sends one message and edits it as you tap. A Back button returns you to the page you came from.
@@ -55,24 +57,25 @@ The bot's database has two tables.
 
 ```
 tgcloud/
-  schema.js            database tables: config and users
+  schema.js                      database tables: config and users
   handlers/
-    message.js         routes text messages to lib/commands.js
-    callback_query.js  handles button taps and edits the picker message
+    message.js                   passes text messages to the command router
+    callback_query.js            handles button taps and edits the picker message
   lib/
-    commands.js        command table, plus the city search for plain text
-    keyboards.js       button layouts for continents, regions, countries and city matches
-    countries.js       generated list of 247 countries (do not edit by hand)
-    users.js           reads and saves a user's row
-    geo.js             city search and place lookup against Open-Meteo
-    worker.js          calls the Worker to switch reminders on or off
-    aladhan.js         prayer time lookup by coordinates, not called by any command yet
-    time.js            24-hour to 12-hour conversion
+    commands/commands.js         command table, the "/" menu list, and the city search for plain text
+    keyboards/keyboards.js       button layouts for continents, regions, countries and city matches
+    data/countries.js            generated list of 247 countries (do not edit by hand)
+    database/config.js           reads one setting from the config table
+    database/users.js            reads and saves a user's row
+    api-call/geo.js              city search and place lookup against Open-Meteo
+    api-call/aladhan.js          prayer time lookup by coordinates, not called by any command yet
+    cloudflare-worker/worker.js  calls the Worker to switch reminders on or off
+    utils/time.js                24-hour to 12-hour conversion
 reminder-worker/
-  src/index.js         cron job (scheduled) and the on/off endpoint (fetch)
-  wrangler.jsonc       cron schedule, KV binding, non-secret settings
+  src/index.js                   cron job (scheduled) and the on/off endpoint (fetch)
+  wrangler.jsonc                 cron schedule, KV binding, non-secret settings
 scripts/
-  gen-countries.mjs    builds tgcloud/lib/countries.js from a public dataset
+  gen-countries.mjs              builds tgcloud/lib/data/countries.js from a public dataset
 ```
 
 ## Setup
@@ -89,6 +92,8 @@ npx tgcloud migrate
 ```
 
 `push` uploads the code. `migrate` creates the tables. The two steps are separate on purpose, because deploying never touches the database.
+
+To show the command list when someone types `/`, register `menu` once with Telegram. Create a short throwaway endpoint that calls `api.setMyCommands({ commands: menu })`, run it with `npx tgcloud run`, check that `api.getMyCommands()` returns your list, then delete the file. Rerun it whenever the list changes.
 
 ### The Worker
 

@@ -16,6 +16,9 @@ Mistakes and surprises worth remembering.
 - Relative imports need `.js`.
 - Telegram's message has `chat.id`, not `chat_id`. A callback query has `message`, not `msg`.
 - Table keys in the command router must be lowercase.
+- A new command needs an entry in `commands`, an entry in `menu`, and a rerun of the menu registration. See [[Commands and flows]].
+- Files in `lib/<folder>/` sit two levels below `tgcloud/`. The schema import is `'../../schema.js'`, a sibling folder is `'../other/file.js'`, and handlers use `'../lib/<folder>/<file>.js'`. A stale path fails with `Cannot find module by name`.
+- To test the callback handler without a real tap, run it with a fake message id. A `BotApiError ... message can't be edited` means the modules loaded, and Telegram refused the fake edit.
 - `edit()` should ignore only the "message is not modified" error, so real 400 errors are not hidden.
 - A callback button with empty `callback_data` or a missing `text` makes Telegram reject the whole keyboard.
 - Do not name a constant `URL`. It shadows the built-in and breaks `new URL(...)`.

@@ -12,9 +12,17 @@ Telegram's serverless platform runs a handler only when an update arrives. A tes
 
 ## The bot (`tgcloud/`)
 
-- `handlers/message.js` passes every text message to `lib/commands.js`.
+- `handlers/message.js` passes every text message to `lib/commands/commands.js`.
 - `handlers/callback_query.js` handles taps on inline buttons by looking up a screen in a table and editing the message.
-- `lib/` holds commands, keyboards, the generated country list, user storage, city search, prayer time lookup, and the call to the Worker.
+- `lib/` is split by purpose, restructured on 2026-11-03:
+  - `commands/` holds the command table, the `/` menu list and the city search for plain text.
+  - `keyboards/` holds the button layouts.
+  - `data/` holds generated data, currently the country list.
+  - `database/` holds `getConfig` and the user reads and writes.
+  - `api-call/` holds calls to third-party APIs: AlAdhan and Open-Meteo.
+  - `cloudflare-worker/` holds the bot's client for the reminder Worker.
+  - `utils/` holds pure helpers such as the 12-hour time format.
+- Dependency direction: handlers use `commands/` and `keyboards/`, those use `api-call/`, `cloudflare-worker/` and `database/`, and `data/` imports nothing. Avoid upward imports and cycles.
 - Everything under `tgcloud/` is deployed with `npx tgcloud push`. Nothing outside it is.
 
 ## The Worker (`reminder-worker/src/index.js`)
