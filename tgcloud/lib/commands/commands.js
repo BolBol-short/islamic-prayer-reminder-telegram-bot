@@ -17,13 +17,13 @@ const reminder = (on) => async (msg) => {
 async function start(msg){
   await api.sendMessage({ 
     chat_id: msg.chat.id, 
-    text: 'Hi lol, use /setlocation to set your location for prayer time. Note: We won\'t take your latitude and longitude location'})
+    text: 'Hello, \n\t This is an Islamic-Prayer-Reminder Telegram bot. \n\t Please use the \'/setlocation\' command to get your location for accurate prayer time'})
 }
 
 async function setLocation(msg){
   await api.sendMessage({
     chat_id: msg.chat.id,
-    text: 'Pick your continent: ',
+    text: 'Pick your specific continent: ',
     reply_markup: { inline_keyboard: regionKeyboard() },
   })
 }
