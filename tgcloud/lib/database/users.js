@@ -1,6 +1,6 @@
 import { db } from 'sdk'
 import { eq } from 'sdk/db'
-import { users } from '../schema.js'
+import { users } from '../../schema.js'
 
 export const getUser = (tgId) => db.select().from(users).where(eq(users.tgId, tgId)).get()
 

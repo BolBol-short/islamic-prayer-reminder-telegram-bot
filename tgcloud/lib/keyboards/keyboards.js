@@ -1,4 +1,4 @@
-import { COUNTRIES } from "./countries.js";
+import { COUNTRIES } from "../data/countries.js";
 
 export const PAGE_SIZE = 8
 const unique = (list) => [...new Set(list)].sort()

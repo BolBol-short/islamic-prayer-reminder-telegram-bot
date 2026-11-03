@@ -1,8 +1,8 @@
 import { api } from 'sdk'
-import { setReminders } from './worker.js'
-import { getUser } from './users.js'
-import { searchCities } from './geo.js'
-import { regionKeyboard, cityKeyboard } from '../lib/keyboards.js'
+import { setReminders } from '../cloudflare-worker/worker.js'
+import { getUser } from '../database/users.js'
+import { searchCities } from '../api-call/geo.js'
+import { regionKeyboard, cityKeyboard } from '../keyboards/keyboards.js'
 
 const reminder = (on) => async (msg) => {
   try {

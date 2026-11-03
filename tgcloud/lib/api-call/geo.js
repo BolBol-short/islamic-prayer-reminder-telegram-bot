@@ -1,12 +1,7 @@
-import { db, fetch } from 'sdk'
-import { eq } from 'sdk/db'
-import { config } from '../schema.js'
+import { fetch } from 'sdk'
+import { getConfig } from '../database/config.js'
 
-async function base(){
-    const row = await db.select().from(config).where(eq(config.key, 'GEOCODING_URL')).get()
-    if(!row) throw new Error('GEOCODING_URL missing')
-    return row.value
-}
+const base = () => getConfig('GEOCODING_URL')
 
 export async function searchCities(name, countryCode) {
     const res = await fetch(`${await base()}/search?name=${encodeURIComponent(name)}&count=5&language=en&countryCode=${countryCode}`)

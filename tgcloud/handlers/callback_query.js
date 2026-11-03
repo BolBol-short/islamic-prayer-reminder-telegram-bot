@@ -1,8 +1,8 @@
 import { api } from 'sdk';
-import { countryKeyboard, regionKeyboard, subregionKeyboard, PAGE_SIZE } from '../lib/keyboards.js';
-import { COUNTRIES } from '../lib/countries.js';
-import { saveUser } from '../lib/users.js';
-import { getPlace } from '../lib/geo.js';
+import { countryKeyboard, regionKeyboard, subregionKeyboard, PAGE_SIZE } from '../lib/keyboards/keyboards.js';
+import { COUNTRIES } from '../lib/data/countries.js';
+import { getPlace } from '../lib/api-call/geo.js';
+import { saveUser } from '../lib/database/users.js';
 
 const screens = {
   r: () => ({ text: 'Pick your continent: ', kb: regionKeyboard() }),
